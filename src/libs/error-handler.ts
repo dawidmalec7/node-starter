@@ -13,6 +13,10 @@ const {
 } = require("objection");
 
 function errorHandler(err: any) {
+  if (err instanceof RequestError) {
+    return err;
+  }
+
   if (err instanceof ValidationError) {
     switch (err.type) {
       case "ModelValidation":

@@ -14,22 +14,19 @@ const formatModulesName = (name: string, descriptor: any) => {
 
 container.loadModules(
   [
-    `${__dirname}/controller/*.ts`,
-    `${__dirname}/service/*.ts`,
-    `${__dirname}/repository/*.ts`,
+    [`${__dirname}/controller/*.ts`, Lifetime.SCOPED],
+    [`${__dirname}/service/*.ts`, Lifetime.SCOPED],
+    [`${__dirname}/repository/*.ts`, Lifetime.SINGLETON],
   ],
   {
     formatName: formatModulesName,
-    resolverOptions: {
-      lifetime: Lifetime.SCOPED,
-    },
   }
 );
 
 container.loadModules([`${__dirname}/model/*.ts`], {
   formatName: "camelCase",
   resolverOptions: {
-    lifetime: Lifetime.SCOPED,
+    lifetime: Lifetime.SINGLETON,
     register: asValue,
   },
 });

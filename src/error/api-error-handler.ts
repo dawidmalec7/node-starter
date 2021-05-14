@@ -1,5 +1,6 @@
 import RequestError from "./request-error";
 import { Response, Request, NextFunction } from "express";
+import logger from "../logger";
 
 function requestErrorHandling(
   err: RequestError,

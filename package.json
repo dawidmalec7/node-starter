@@ -12,12 +12,19 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/cors": "^2.8.10",
+    "@types/morgan": "^1.9.2",
+    "@types/winston": "^2.4.4",
     "awilix": "^4.3.4",
+    "cors": "^2.8.5",
+    "dotenv": "^9.0.2",
     "express": "^4.17.1",
     "knex": "^0.95.4",
+    "morgan": "^1.10.0",
     "objection": "^2.2.15",
     "pg": "^8.6.0",
     "ts-node-dev": "^1.1.6",
+    "winston": "^3.3.3",
     "yup": "^0.32.9"
   },
   "devDependencies": {

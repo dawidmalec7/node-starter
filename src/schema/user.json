@@ -17,6 +17,11 @@
       "title": "The user email. Must be unique.",
       "examples": ["test@test.pl"]
     },
+    "password": {
+      "$id": "#/properties/password",
+      "type": "string",
+      "title": "The user hashed password"
+    },
     "first_name": {
       "$id": "#/properties/first_name",
       "type": "string",
