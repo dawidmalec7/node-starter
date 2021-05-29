@@ -1,4 +1,4 @@
-import RequestError from "error/request-error";
+import RequestError from "model/request-error";
 
 const {
   ValidationError,

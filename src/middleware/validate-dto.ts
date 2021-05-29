@@ -1,5 +1,5 @@
 import { NextFunction, Response, Request } from "express";
-import RequestError from "error/request-error";
+import RequestError from "model/request-error";
 
 function validateDto(schema: any) {
   return async (req: Request, _: Response, next: NextFunction) => {

@@ -1,28 +1,46 @@
 import User from "model/user";
 import { ID } from "types/commons";
-import { USER } from "types/user";
 import knex from "knex";
+import { BaseRepository } from "libs/base-repository";
+import { USER } from "types/user";
 
-class UserRepository {
-  private user: any;
+interface UserRepositoryDependencies {
+  user: typeof User;
+}
+class UserRepository extends BaseRepository<User> {
+  private user: typeof User;
 
-  constructor({ user }: any) {
+  constructor({ user }: UserRepositoryDependencies) {
+    super();
     this.user = user;
   }
 
-  insert<T>(user: T): Promise<knex.QueryBuilder> {
-    return this.user.query().insert(user).returning("*");
+  async create<T>(user: T) {
+    return await this.user.query().insert(user).returning("*");
   }
 
-  async findById<T>(id: ID): Promise<knex.QueryBuilder> {
-    return await this.user.query().findById(Number(id)).returning("*");
+  // delete(id: ID): Promise<boolean> {
+  //   throw new Error("Method not implemented.");
+  // }
+
+  async findById(id: ID) {
+    return await this.user.query().findById(id).returning("*");
   }
 
-  findOne<T>(...args: any[]): Promise<knex.QueryBuilder> {
-    return User.query().findOne(args).returning("*");
+  async findOne(key: string, value: any): Promise<User> {
+    return await this.user
+      .query()
+      .findOne({ [key]: value })
+      .returning("*");
   }
 
-  deleteUser = async (id: ID) => await User.query().where("id", id).del();
+  async findAll() {
+    return await this.user.query();
+  }
+
+  async delete(id: ID) {
+    return this.user.query().findById(id).del();
+  }
 
   updateUser = async (id: ID, user: User) => {
     const { firstName, lastName, email } = user;

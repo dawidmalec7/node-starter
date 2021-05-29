@@ -1,12 +1,13 @@
 import { knexSnakeCaseMappers } from "objection";
+import config from "../config/index";
 
 const knexfile = {
   development: {
     client: "postgresql",
     connection: {
-      database: "studiobnb",
-      user: "me",
-      password: "password",
+      database: config.db.url,
+      user: config.db.user,
+      password: config.db.password,
     },
     pool: {
       min: 2,

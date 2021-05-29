@@ -1,10 +1,12 @@
 import { Model } from "objection";
+import tableNames from "constants/table-names";
 import User from "model/user";
 
 class Studio extends Model {
   static get tableName() {
-    return "studios";
+    return tableNames.studios;
   }
+
   static get relationMappings() {
     return {
       users: {

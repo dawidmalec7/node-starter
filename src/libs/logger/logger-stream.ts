@@ -1,4 +1,4 @@
-import logger from "logger";
+import logger from "libs/logger";
 
 class LoggerStream {
   write(text: string) {

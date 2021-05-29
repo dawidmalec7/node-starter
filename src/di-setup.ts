@@ -1,4 +1,10 @@
-import { createContainer, InjectionMode, asValue, Lifetime } from "awilix";
+import {
+  createContainer,
+  InjectionMode,
+  asValue,
+  Lifetime,
+  asClass,
+} from "awilix";
 
 const container = createContainer({
   injectionMode: InjectionMode.PROXY,
@@ -35,6 +41,7 @@ const setupDIMiddleware = function (req: any, res: any, next: any) {
   req.container = container.createScope();
 
   req.container.register({
+    session: asValue(req.session),
     request: asValue(req),
     response: asValue(res),
   });

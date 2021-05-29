@@ -1,16 +1,19 @@
 import { Model, snakeCaseMappers } from "objection";
 import Studio from "model/studio";
-import userSchema from "schema/user.json";
+import tableNames from "constants/table-names";
 import { ID } from "types/commons";
-import QueryBuilder, { knex } from "knex";
+import Role from "model/role";
 
 class User extends Model {
-  firstName?: string;
-  lastName?: string;
+  id?: ID;
+  firstName: string;
+  lastName: string;
+  phone: string;
   email: string;
+  password: string;
 
   static get tableName() {
-    return "users";
+    return tableNames.users;
   }
 
   static columnNameMappers = snakeCaseMappers();
@@ -25,24 +28,16 @@ class User extends Model {
           to: "studios.user_id",
         },
       },
+      roles: {
+        relation: Model.HasManyRelation,
+        modelClass: Role,
+        join: {
+          from: "users.id",
+          to: "roles.id",
+        },
+      },
     };
   }
-
-  static insert<T>(user: T): Promise<knex.QueryBuilder> {
-    return User.query().insert(user).returning("*");
-  }
-
-  static findById<T>(id: ID): Promise<knex.QueryBuilder> {
-    return User.query().findById(id).returning("*");
-  }
-
-  static findOne<T>(...args: any[]): Promise<knex.QueryBuilder> {
-    return User.query().findOne(args).returning("*");
-  }
-
-  // static get jsonSchema() {
-  //   return userSchema;
-  // }
 }
 
 export default User;
