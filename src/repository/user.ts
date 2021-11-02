@@ -15,15 +15,11 @@ class UserRepository extends BaseRepository<User> {
     this.user = user;
   }
 
-  async create<T>(user: T) {
+  async create<T>(user: T): Promise<User> {
     return await this.user.query().insert(user).returning("*");
   }
 
-  // delete(id: ID): Promise<boolean> {
-  //   throw new Error("Method not implemented.");
-  // }
-
-  async findById(id: ID) {
+  async findById(id: ID): Promise<User> {
     return await this.user.query().findById(id).returning("*");
   }
 
@@ -31,23 +27,22 @@ class UserRepository extends BaseRepository<User> {
     return await this.user
       .query()
       .findOne({ [key]: value })
-      .returning("*");
+      .returning(["id", "firstName", "lastName", "phone", "email"]);
   }
 
-  async findAll() {
-    return await this.user.query();
+  async findAll(): Promise<User[]> {
+    return await this.user
+      .query()
+      .returning(["id", "firstName", "lastName", "phone", "email"]);
   }
 
-  async delete(id: ID) {
-    return this.user.query().findById(id).del();
+  async delete(id: ID): Promise<number> {
+    return await this.user.query().deleteById(id);
   }
 
-  updateUser = async (id: ID, user: User) => {
-    const { firstName, lastName, email } = user;
-    return await User.query()
-      .where("id", id)
-      .update({ firstName, lastName, email });
-  };
+  async update<T>(id: ID, user: T): Promise<User> {
+    return await this.user.query().updateAndFetchById(id, user);
+  }
 }
 
 export default UserRepository;

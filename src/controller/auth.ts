@@ -28,8 +28,20 @@ class AuthController {
     next: HTTP.NEXT
   ) => {
     try {
-      //TODO: update 
       const tokens = await this.authService.register();
+      res.status(201).json(tokens);
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  public verify = async (
+    req: HTTP.REQUEST,
+    res: HTTP.RESPONSE,
+    next: HTTP.NEXT
+  ) => {
+    try {
+      const tokens = await this.authService.authenticateToken(next);
       res.status(201).json(tokens);
     } catch (err) {
       next(err);

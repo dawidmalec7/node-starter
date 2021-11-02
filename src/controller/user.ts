@@ -9,18 +9,6 @@ class UserController {
   constructor({ userService }: UserControllerDependencies) {
     this.userService = userService;
   }
-  public createUser = async (
-    req: HTTP.REQUEST,
-    res: HTTP.RESPONSE,
-    next: HTTP.NEXT
-  ) => {
-    try {
-      const user = await this.userService.createUser();
-      res.status(201).json(user);
-    } catch (err) {
-      next(err);
-    }
-  };
 
   public getUser = async (
     req: HTTP.REQUEST,

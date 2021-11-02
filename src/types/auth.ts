@@ -1,6 +1,6 @@
 export namespace AUTH {
   export interface SIGN_IN_CREDENTIALS {
-    email: string;
+    login: string;
     password: string;
   }
 

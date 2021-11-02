@@ -30,16 +30,6 @@ class UserService {
     this.session = session;
   }
 
-  public createUser = async (
-    userBody: USER.CREATE_BODY = this.request.body
-  ) => {
-    try {
-      return await this.userRepository.create<USER.CREATE_BODY>(userBody);
-    } catch (err) {
-      throw errorHandler(err);
-    }
-  };
-
   public getUserById = async (id: ID = this.request.params.id) => {
     try {
       const user = await this.userRepository.findById(id);

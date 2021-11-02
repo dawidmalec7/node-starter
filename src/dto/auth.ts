@@ -13,7 +13,7 @@ const registerDto = yup.object().shape({
 });
 
 const loginDto = yup.object().shape({
-  email: yup.string().required().email("Wrong email"),
+  login: yup.string().required(),
   password: yup
     .string()
     .required("No password provided.")

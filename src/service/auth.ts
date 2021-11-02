@@ -57,34 +57,15 @@ class AuthService {
         email: credentials.email,
       });
     } catch (err) {
+      if (err.constraint === "users_email_unique") {
+        throw new RequestError({
+          status: 422,
+          message: "Login is reserved",
+          data: { email: credentials.email },
+        });
+      }
       throw errorHandler(err);
     }
-  };
-
-  public login = async (
-    credentials: AUTH.SIGN_IN_CREDENTIALS = this.request.body
-  ) => {
-    //check if the credentials are correct (email exist / compare passwords)
-    const email = credentials.email;
-    const password = credentials.password;
-
-    if (!email || !password) {
-      throw new RequestError({
-        status: 401,
-        message: "Provide email and password",
-        data: {},
-      });
-    }
-
-    let user: User;
-
-    try {
-      user = await this.userRepository.findOne("email", email);
-    } catch (err) {
-      throw errorHandler(err);
-    }
-
-    //check password
 
     try {
       const [
@@ -95,7 +76,6 @@ class AuthService {
       const { name, value, options } = createAccessTokenCookie(accessToken);
       this.response.cookie(name, value, options);
 
-      console.log(this.request.session);
       this.session.accessToken = accessToken;
       this.session.refreshToken = refreshToken;
       this.session.userId = user.id;
@@ -106,12 +86,62 @@ class AuthService {
     }
   };
 
-  authenticateToken = async (
-    req: HTTP.REQUEST,
-    res: HTTP.RESPONSE,
-    next: HTTP.NEXT
+  public login = async (
+    credentials: AUTH.SIGN_IN_CREDENTIALS = this.request.body
   ) => {
-    const reqAccessHeader = req.headers["authorization"];
+    const login = credentials.login;
+    const password = credentials.password;
+
+    if (!login || !password) {
+      throw new RequestError({
+        status: 401,
+        message: "Provide email and password",
+        data: {},
+      });
+    }
+
+    let user: User;
+
+    try {
+      user = await this.userRepository.findOne("email", login);
+    } catch (err) {
+      throw errorHandler(err);
+    }
+
+    const passwordCheckedResult = await bcrypt.compare(
+      credentials.password,
+      user.password
+    );
+
+    if (!passwordCheckedResult) {
+      throw new RequestError({
+        message: "Incorrect password",
+        status: 401,
+        data: {},
+      });
+    }
+
+    try {
+      const [
+        accessToken,
+        refreshToken,
+      ] = await this.tokenService.resolveAuthTokens(user.id);
+
+      const { name, value, options } = createAccessTokenCookie(accessToken);
+      this.response.cookie(name, value, options);
+
+      this.session.accessToken = accessToken;
+      this.session.refreshToken = refreshToken;
+      this.session.userId = user.id;
+
+      return { accessToken, refreshToken };
+    } catch (err) {
+      throw errorHandler(err);
+    }
+  };
+
+  authenticateToken = async (next: HTTP.NEXT) => {
+    const reqAccessHeader = this.request.headers["authorization"];
 
     if (!reqAccessHeader)
       throw new RequestError({
@@ -137,9 +167,11 @@ class AuthService {
             data: {},
           });
         }
+
         const [accessToken] = await this.tokenService.resolveAuthTokens(
           this.session.userId
         );
+
         const { name, value, options } = createAccessTokenCookie(accessToken);
         this.response.cookie(name, value, options);
         this.session.accessToken = accessToken;

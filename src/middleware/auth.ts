@@ -1,4 +1,9 @@
+import { TokenExpiredError } from "jsonwebtoken";
+import { createAccessTokenCookie } from "libs/cookies";
 import RequestError from "model/request-error";
+import User from "model/user";
+import UserRepository from "repository/user";
+import AuthService from "service/auth";
 import TokenService from "service/token";
 import { HTTP } from "types/http";
 
@@ -7,32 +12,19 @@ const authenticateToken = async (
   res: HTTP.RESPONSE,
   next: HTTP.NEXT
 ) => {
-  const reqAccessHeader = req.headers["authorization"];
+  const authService = new AuthService({
+    tokenService: new TokenService(),
+    userRepository: new UserRepository({ user: User }),
+    response: res,
+    request: req,
+    session: req.session as HTTP.SESSION,
+  });
 
-  if (!reqAccessHeader)
-    next(
-      new RequestError({
-        status: 401,
-        message: "Unauthorized",
-        data: {},
-      })
-    );
-
-  const reqAccessToken = (reqAccessHeader as string).split(" ")[1];
-  const tokenService = new TokenService();
   try {
-    const user = await tokenService.verify(reqAccessToken, "access");
-    req.user = user;
+    await authService.authenticateToken(next);
   } catch (err) {
-    next(
-      new RequestError({
-        status: 401,
-        message: "Unauthorized",
-        data: {},
-      })
-    );
+    next(err);
   }
-  next();
 };
 
 export default authenticateToken;

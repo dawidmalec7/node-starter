@@ -1,5 +1,6 @@
 import { knexSnakeCaseMappers } from "objection";
-import config from "../config/index";
+require("dotenv").config({ path: "../../.env" });
+import config from "../config";
 
 const knexfile = {
   development: {

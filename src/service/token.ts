@@ -6,7 +6,7 @@ class TokenService {
   public resolveAuthTokens = async (userId: string) => {
     const accessToken = jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, {
       algorithm: "HS256",
-      expiresIn: Math.floor(Date.now() / 1000) + 60 * 60,
+      expiresIn: "1m",
     });
 
     const refreshToken = jwt.sign(
@@ -14,7 +14,7 @@ class TokenService {
       process.env.REFRESH_TOKEN_SECRET,
       {
         algorithm: "HS256",
-        expiresIn: Math.floor(Date.now() / 1000) + 60 * 60 * 2,
+        expiresIn: "1d",
       }
     );
 

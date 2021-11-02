@@ -11,7 +11,6 @@ import knexfile from "./knexfile";
 
 const knexDb = () => knex(knexfile.development);
 const setupDb = () => {
-  console.log(knexfile.development);
   Model.knex(knexDb());
 };
 export { setupDb, knexDb };
